@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/winstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Free Games Daily</title>
+</head>
+<body style="-webkit-app-region: drag">
+
+    <div class="container">
+        <h1>Free Games Daily</h1>
+        <br>
+        By <a href="http://freetogame.com/api-doc" target="_blank">free to game API</a>
+        <br><br>
+        <response></response>
+    </div>
+
+    <script src="assets/js/vendor/jquery.min.js"></script>
+    <script src="assets/js/vendor/bootstrap.min.js"></script>
+</body>
+</html>
+
+<script>
+    const electron = require('electron')
+    const axios = require('axios')
+
+    let webservice = 'https://www.freetogame.com/api/games'
+
+    let responseOut = document.querySelector('response')
+    responseOut.innerHTML = 'Loading data ...'
+
+
+    axios.get(`${webservice}?sort-by=release-date`)
+    .then(response => {
+        let data = response.data
+
+        if(response.status == 200){
+            responseOut.innerHTML = '<ul>'
+
+            for(i = 0; i < data.length; i++){
+
+                if(i <= 100){
+                    let game = data[i]
+                    
+                    responseOut.innerHTML += `
+                    <li>
+                        <img src="${game.thumbnail}" width="500">
+                        <br>
+                        <h4>${game.title}</h4>
+                    </li>
+                    <ul>
+                        <li>${game.genre} | ${game.platform}</li>
+                        <li>
+                            <b>Description</b>
+                            ${game.short_description}
+                        </li>
+                        <li>Developer/Publisher: ${game.developer}/${game.publisher}</li>
+                        <li>Release date: ${game.release_date}</li>
+                        <li><a href="javascript:void(0);" href="${game.game_url}" target="_blank" class="btn btn-primary" >${game.game_url}</a></li>
+                    </ul>
+                    <hr>
+                `
+                console.log(game)
+                }else{
+                    break;
+                }
+            }
+            responseOut.innerHTML += '</ul>'
+        }else{
+            responseOut.innerHTML = 'ERROR'
+        }
+
+        
+    })
+</script>
